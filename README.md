@@ -43,6 +43,43 @@ kubernetes_service_cidr = "192.168.0.0/16"
 terraform apply
 ```
 
+You can now use the kubernetes service type `LoadBalancer` and you will be assigned a External IP.
+
+For example we can deploy the traefik ingress and use that as our public load balancer.
+Here we are using the `DaemonSet` deployment from the traefik [guide](https://docs.traefik.io/user-guide/kubernetes/).
+
+We modified the Service by adding the `metallb.universe.tf/address-pool: packet-public` annotation and type to use `type: LoadBalancer` like so:
+
+```yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-ingress-service
+  namespace: kube-system
+  annotations:
+    metallb.universe.tf/address-pool: packet-public
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+    - protocol: TCP
+      port: 8080
+      name: admin
+  type: LoadBalancer
+```
+
+This results into this:
+
+```sh
+$ kubectl get svc -n kube-system
+NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)                       AGE
+kube-dns                  ClusterIP      192.168.0.10     <none>           53/UDP,53/TCP                 11m
+traefik-ingress-service   LoadBalancer   192.168.60.102   147.75.193.148   80:32358/TCP,8080:32196/TCP   7s
+````
+
 Overall Network Topology
 ------------------------
 
