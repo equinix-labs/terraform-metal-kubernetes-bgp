@@ -34,7 +34,7 @@ resource "null_resource" "setup_worker" {
   }
 
   provisioner "file" {
-    source = "${path.module}/scripts/install-calicoctl.sh"
+    source      = "${path.module}/scripts/install-calicoctl.sh"
     destination = "/tmp/install-calicoctl.sh"
   }
 
@@ -66,7 +66,7 @@ resource "null_resource" "setup_worker" {
 
 # We need to get the private IPv4 Gateway of each worker
 data "external" "private_ipv4_gateway" {
-  count = "${var.worker_count}"
+  count   = "${var.worker_count}"
   program = ["${path.module}/scripts/gateway.sh"]
 
   query = {
