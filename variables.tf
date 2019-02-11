@@ -37,7 +37,3 @@ variable "kubernetes_dns_domain" {
   description = "Kubernetes Internal DNS Domain"
   default     = "cluster.local"
 }
-
-variable "kubeadm_token" {
-  description = "Kubeadm token"
-}

@@ -37,7 +37,6 @@ kubernetes_port = "6443"
 kubernetes_dns_ip = "192.168.0.10"
 kubernetes_cluster_cidr = "172.16.0.0/12"
 kubernetes_service_cidr = "192.168.0.0/16"
-kubeadm_token = "tcqfab.8d5qen6tf2gaztam"
 ```
 
 ```sh

@@ -9,15 +9,6 @@ echo "[----- Setting up Kubernetes using kubeadm ----]"
 cat <<EOF >kubeadm-config.yaml
 apiVersion: kubeadm.k8s.io/v1beta1
 kind: InitConfiguration
-bootstrapTokens:
-  - token: ${kubeadm_token}
-    description: "kubeadm bootstrap token"
-    ttl: "24h"
-    usages:
-    - signing
-    - authentication
-    groups:
-    - system:bootstrappers:kubeadm:default-node-token
 localAPIEndpoint:
   advertiseAddress: $LOCAL_IP
   bindPort: ${kubernetes_port}

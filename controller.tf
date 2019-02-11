@@ -74,6 +74,5 @@ data "template_file" "setup_kubeadm" {
     kubernetes_dns_domain   = "${var.kubernetes_dns_domain}"
     kubernetes_cluster_cidr = "${var.kubernetes_cluster_cidr}"
     kubernetes_service_cidr = "${var.kubernetes_service_cidr}"
-    kubeadm_token           = "${var.kubeadm_token}"
   }
 }

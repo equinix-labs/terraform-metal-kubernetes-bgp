@@ -4,21 +4,11 @@ Kuberenetes Kubeadm Config Example
 ```yaml
 apiVersion: kubeadm.k8s.io/v1beta1
 kind: InitConfiguration
-bootstrapTokens:
-  - token: tcqfab.8d5qen6tf2gaztam
-    description: "kubeadm bootstrap token"
-    ttl: "24h"
-    usages:
-    - signing
-    - authentication
-    groups:
-    - system:bootstrappers:kubeadm:default-node-token
 localAPIEndpoint:
-  advertiseAddress: 10.99.14.9
+  advertiseAddress: 10.99.254.3
   bindPort: 6443
 nodeRegistration:
-  criSocket: /var/run/dockershim.sock
-  name: ewr1-controller-0
+  name: ewr1-controller
   taints:
   - key: "kubeadmNode"
     value: "master"
@@ -29,30 +19,30 @@ nodeRegistration:
 apiVersion: kubeadm.k8s.io/v1beta1
 kind: ClusterConfiguration
 clusterName: kubernetes
-kubernetesVersion: v1.13.0
+kubernetesVersion: v1.13.3
 apiServer:
   extraArgs:
     secure-port: "6443"
-    bind-address: 10.99.14.9
+    bind-address: 10.99.254.3
 controllerManager:
   extraArgs:
-    bind-address: 10.99.14.9
+    bind-address: 10.99.254.3
 scheduler:
   extraArgs:
-    bind-address: 10.99.14.9
+    bind-address: 10.99.254.3
 etcd:
   local:
     extraArgs:
-      listen-client-urls: "https://127.0.0.1:2379,https://10.99.14.9:2379"
-      advertise-client-urls: "https://10.99.14.9:2379"
-      listen-peer-urls: "https://10.99.14.9:2380"
-      initial-advertise-peer-urls: "https://10.99.14.9:2380"
-      initial-cluster: "ewr1-controller-0=https://10.99.14.9:2380"
+      listen-client-urls: "https://127.0.0.1:2379,https://10.99.254.3:2379"
+      advertise-client-urls: "https://10.99.254.3:2379"
+      listen-peer-urls: "https://10.99.254.3:2380"
+      initial-advertise-peer-urls: "https://10.99.254.3:2380"
+      initial-cluster: "ewr1-controller=https://10.99.254.3:2380"
       initial-cluster-state: new
     serverCertSANs:
-      - ewr1-controller-0
+      - ewr1-controller
     peerCertSANs:
-      - ewr1-controller-0
+      - ewr1-controller
 networking:
   dnsDomain: cluster.local
   podSubnet: 172.16.0.0/12
@@ -66,5 +56,5 @@ clusterDomain: cluster.local
 ---
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
-bindAddress: 10.99.14.9
+bindAddress: 10.99.254.3
 ```
