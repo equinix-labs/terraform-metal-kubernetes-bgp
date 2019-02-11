@@ -18,13 +18,40 @@ Kubernetes Network:
 
 Packet Network:
 
-| Network                  | Subnet           |
-| ------------------------ | ---------------- |
-| Packet Elastic IP(EWR1)  | 147.75.194.92/30 |
-| Packet Global Elastic IP | 147.75.40.8/32   |
-| Packet Private Network*  | 10.99.110.128/25 |
+| Network                  | Subnet                    |
+| ------------------------ | ------------------------- |
+| Packet Elastic IP(EWR1)  | 147.75.194.92/31(example) |
 
-\* Packet provides 3 IP addresses when you provision a server, a public IPv4 & IPv6 and a private IPv4. The private IPv4 IP though is part of Packet's private 10.0.0.0/8 block of IPs and each server gets its own /31(/30) subnet from it and is ACLd to only allow your projcects private IP blocks.
+TL;DR
+----
+
+This will deploy a cluster of 3, 1 master and 2 worker nodes. It will allow you to use the service type `LoadBalancer`.
+
+Make a copy of `terraform.tfvars.sample` as `terraform.tfvars`  and set the `auth_token`.
+
+```sh
+auth_token = "PACKET_AUTH_TOKEN"
+facility = "ewr1"
+kubernetes_version = "v1.13.3"
+kubernetes_port = "6443"
+kubernetes_dns_ip = "192.168.0.10"
+kubernetes_cluster_cidr = "172.16.0.0/12"
+kubernetes_service_cidr = "192.168.0.0/16"
+kubeadm_token = "tcqfab.8d5qen6tf2gaztam"
+```
+
+```sh
+terraform apply
+```
+
+Overall Network Topology
+------------------------
+
+![alt text](images/network-arch.png "Packet BGP Diagram")
+
+BGP on Packet uses the private `/31` IPv4 network to peer with. 
+
+As an example in the diagram above the server has the IP `10.99.14.7/31` assign on the server and the gateway is `10.99.14.6/31`, which is the IP your would peer with since that is the IP assigned to the ToR router.
 
 Kubeadm
 -------
@@ -166,14 +193,14 @@ Set a default BGP configuration for Calico
 
 ```sh
 cat << EOF | DATASTORE_TYPE=kubernetes KUBECONFIG=~/.kube/config calicoctl create -f -
-    apiVersion: projectcalico.org/v3
-    kind: BGPConfiguration
-    metadata:
-      name: default
-    spec:
-      logSeverityScreen: Info
-      nodeToNodeMeshEnabled: true
-      asNumber: 65000
+apiVersion: projectcalico.org/v3
+kind: BGPConfiguration
+metadata:
+  name: default
+spec:
+  logSeverityScreen: Info
+  nodeToNodeMeshEnabled: true
+  asNumber: 65000
 EOF
 ```
 
@@ -203,7 +230,7 @@ kind: IPPool
 metadata:
   name: metallb-ewr1-public
 spec:
-  cidr: 147.75.194.92/30
+  cidr: 139.178.64.136/31
   disabled: true
 EOF
 ```
