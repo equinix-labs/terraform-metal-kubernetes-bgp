@@ -11,10 +11,6 @@ variable "kubernetes_version" {
   default     = "v1.13.3"
 }
 
-variable "kubernetes_domain" {
-  description = "Kubernetes API domain"
-}
-
 variable "kubernetes_port" {
   description = "Kubernetes API Port"
 }
