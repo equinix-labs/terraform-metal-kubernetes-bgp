@@ -3,7 +3,7 @@ provider "packet" {
 }
 
 resource "packet_project" "kubenet" {
-  name = "kubenet"
+  name = "k8s-bgp"
 
   bgp_config {
     deployment_type = "local"
