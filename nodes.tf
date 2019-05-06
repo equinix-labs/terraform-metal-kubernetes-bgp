@@ -29,7 +29,7 @@ resource "null_resource" "setup_worker" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/templates/setup-kube.sh"
+    content     = "${data.template_file.install_kubernetes.rendered}"
     destination = "/tmp/setup-kube.sh"
   }
 

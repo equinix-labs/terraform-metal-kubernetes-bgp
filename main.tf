@@ -36,3 +36,11 @@ data "template_file" "install_docker" {
     docker_version = "${var.docker_version}"
   }
 }
+
+data "template_file" "install_kubernetes" {
+  template = "${file("${path.module}/templates/setup-kube.sh.tpl")}"
+
+  vars = {
+    kubernetes_version = "${var.kubernetes_version}"
+  }
+}

@@ -28,7 +28,7 @@ resource "packet_device" "k8s_controller" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/templates/setup-kube.sh"
+    content     = "${data.template_file.install_kubernetes.rendered}"
     destination = "/tmp/setup-kube.sh"
   }
 
