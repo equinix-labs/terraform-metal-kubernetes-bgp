@@ -2,12 +2,13 @@ variable "hostname" {
   default = "controller"
 }
 
+// Setup the kubernetes controller node
 resource "packet_device" "k8s_controller" {
   project_id       = "${packet_project.kubenet.id}"
-  facility         = "${var.facility}"
+  facilities       = "${var.facilities}"
   plan             = "${var.controller_plan}"
   operating_system = "ubuntu_16_04"
-  hostname         = "${format("%s-%s", "${var.facility}", "${var.hostname}")}"
+  hostname         = "${format("%s-%s", "${var.facilities[0]}", "${var.hostname}")}"
   billing_cycle    = "hourly"
   tags             = ["kubernetes", "k8s", "controller"]
 

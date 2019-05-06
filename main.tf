@@ -11,8 +11,8 @@ resource "packet_project" "kubenet" {
   }
 }
 
-variable "facility" {
-  default = "ewr1"
+variable "facilities" {
+  default = ["ewr1"]
 }
 
 variable "worker_count" {
