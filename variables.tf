@@ -3,7 +3,7 @@ variable "auth_token" {
 }
 
 variable "docker_version" {
-  default = "18.09"
+  default = "18.06.2"
 }
 
 variable "kubernetes_version" {

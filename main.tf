@@ -29,6 +29,7 @@ variable "worker_plan" {
   default     = "t1.small.x86"
 }
 
+// General template used to install docker on Ubuntu 16.04
 data "template_file" "install_docker" {
   template = "${file("${path.module}/templates/install-docker.sh.tpl")}"
 
