@@ -3,12 +3,12 @@ variable "auth_token" {
 }
 
 variable "docker_version" {
-  default = "18.09"
+  default = "18.06.2"
 }
 
 variable "kubernetes_version" {
   description = "Kubernetes Version"
-  default     = "v1.13.3"
+  default     = "1.14.1"
 }
 
 variable "kubernetes_port" {

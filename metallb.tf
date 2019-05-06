@@ -1,7 +1,7 @@
 # Get some public IPs to use for our load balancer
 resource "packet_reserved_ip_block" "load_balancer_ips" {
   project_id = "${packet_project.kubenet.id}"
-  facility   = "${var.facility}"
+  facility   = "${var.facilities.[0]}"
   quantity   = 2
 }
 

@@ -3,7 +3,7 @@ provider "packet" {
 }
 
 resource "packet_project" "kubenet" {
-  name = "kubenet"
+  name = "k8s-bgp"
 
   bgp_config {
     deployment_type = "local"
@@ -11,8 +11,8 @@ resource "packet_project" "kubenet" {
   }
 }
 
-variable "facility" {
-  default = "ewr1"
+variable "facilities" {
+  default = ["ewr1"]
 }
 
 variable "worker_count" {
@@ -29,10 +29,19 @@ variable "worker_plan" {
   default     = "t1.small.x86"
 }
 
+// General template used to install docker on Ubuntu 16.04
 data "template_file" "install_docker" {
   template = "${file("${path.module}/templates/install-docker.sh.tpl")}"
 
   vars = {
     docker_version = "${var.docker_version}"
+  }
+}
+
+data "template_file" "install_kubernetes" {
+  template = "${file("${path.module}/templates/setup-kube.sh.tpl")}"
+
+  vars = {
+    kubernetes_version = "${var.kubernetes_version}"
   }
 }

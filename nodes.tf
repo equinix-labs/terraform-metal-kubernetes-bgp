@@ -1,10 +1,10 @@
 resource "packet_device" "k8s_workers" {
   project_id       = "${packet_project.kubenet.id}"
-  facility         = "${var.facility}"
+  facilities       = "${var.facilities}"
   count            = "${var.worker_count}"
   plan             = "${var.worker_plan}"
   operating_system = "ubuntu_16_04"
-  hostname         = "${format("%s-%s-%d", "${var.facility}", "worker", count.index)}"
+  hostname         = "${format("%s-%s-%d", "${var.facilities[0]}", "worker", count.index)}"
   billing_cycle    = "hourly"
   tags             = ["kubernetes", "k8s", "worker"]
 }
@@ -29,7 +29,7 @@ resource "null_resource" "setup_worker" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/templates/setup-kube.sh"
+    content     = "${data.template_file.install_kubernetes.rendered}"
     destination = "/tmp/setup-kube.sh"
   }
 

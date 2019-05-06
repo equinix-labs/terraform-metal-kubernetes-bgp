@@ -19,7 +19,7 @@ nodeRegistration:
     value: "master"
     effect: "NoSchedule"
   kubeletExtraArgs:
-    cgroup-driver: "cgroupfs"
+    cgroup-driver: "systemd"
 ---
 apiVersion: kubeadm.k8s.io/v1beta1
 kind: ClusterConfiguration

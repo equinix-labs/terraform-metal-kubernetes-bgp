@@ -2,12 +2,13 @@ variable "hostname" {
   default = "controller"
 }
 
+// Setup the kubernetes controller node
 resource "packet_device" "k8s_controller" {
   project_id       = "${packet_project.kubenet.id}"
-  facility         = "${var.facility}"
+  facilities       = "${var.facilities}"
   plan             = "${var.controller_plan}"
   operating_system = "ubuntu_16_04"
-  hostname         = "${format("%s-%s", "${var.facility}", "${var.hostname}")}"
+  hostname         = "${format("%s-%s", "${var.facilities[0]}", "${var.hostname}")}"
   billing_cycle    = "hourly"
   tags             = ["kubernetes", "k8s", "controller"]
 
@@ -27,7 +28,7 @@ resource "packet_device" "k8s_controller" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/templates/setup-kube.sh"
+    content     = "${data.template_file.install_kubernetes.rendered}"
     destination = "/tmp/setup-kube.sh"
   }
 
@@ -68,7 +69,7 @@ data "template_file" "setup_kubeadm" {
   template = "${file("${path.module}/templates/setup-kubeadm.sh.tpl")}"
 
   vars = {
-    kubernetes_version      = "${var.kubernetes_version}"
+    kubernetes_version      = "v${var.kubernetes_version}"
     kubernetes_port         = "${var.kubernetes_port}"
     kubernetes_dns_ip       = "${var.kubernetes_dns_ip}"
     kubernetes_dns_domain   = "${var.kubernetes_dns_domain}"
