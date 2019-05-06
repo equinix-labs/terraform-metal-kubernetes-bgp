@@ -68,7 +68,7 @@ data "template_file" "setup_kubeadm" {
   template = "${file("${path.module}/templates/setup-kubeadm.sh.tpl")}"
 
   vars = {
-    kubernetes_version      = "${var.kubernetes_version}"
+    kubernetes_version      = "v${var.kubernetes_version}"
     kubernetes_port         = "${var.kubernetes_port}"
     kubernetes_dns_ip       = "${var.kubernetes_dns_ip}"
     kubernetes_dns_domain   = "${var.kubernetes_dns_domain}"

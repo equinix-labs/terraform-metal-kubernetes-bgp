@@ -8,7 +8,7 @@ variable "docker_version" {
 
 variable "kubernetes_version" {
   description = "Kubernetes Version"
-  default     = "v1.13.3"
+  default     = "1.14.1"
 }
 
 variable "kubernetes_port" {
