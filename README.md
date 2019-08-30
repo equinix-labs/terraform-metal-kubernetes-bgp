@@ -5,9 +5,9 @@ This guide can be used as a reference to deploy Kubernetes on Packet bare-metal 
 
 | Component  | Version |
 | ---------- | ------- |
-| Kubernetes | v1.14.1 |
-| Calico     | v3.5    |
-| MetalLB    | v0.7.3  |
+| Kubernetes | v1.15.3 |
+| Calico     | v3.8    |
+| MetalLB    | v0.8.1  |
 
 Kubernetes Network:
 
