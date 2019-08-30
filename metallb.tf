@@ -47,7 +47,7 @@ resource "null_resource" "setup_metallb" {
 
   provisioner "remote-exec" {
     inline = [
-      "kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml",
+      "kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml",
       "kubectl apply -f /tmp/metallb-config.yaml",
     ]
   }
