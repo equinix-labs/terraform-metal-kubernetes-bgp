@@ -6,7 +6,7 @@ This guide can be used as a reference to deploy Kubernetes on Packet bare-metal 
 | Component  | Version |
 | ---------- | ------- |
 | Kubernetes | v1.15.3 |
-| Calico     | v3.8    |
+| Calico     | v3.8.2  |
 | MetalLB    | v0.8.1  |
 
 Kubernetes Network:
@@ -32,7 +32,7 @@ Make a copy of `terraform.tfvars.sample` as `terraform.tfvars`  and set the `aut
 ```sh
 auth_token = "PACKET_AUTH_TOKEN"
 facilities = ["ewr1"]
-kubernetes_version = "1.14.1"
+kubernetes_version = "1.15.3"
 kubernetes_port = "6443"
 kubernetes_dns_ip = "192.168.0.10"
 kubernetes_cluster_cidr = "172.16.0.0/12"
