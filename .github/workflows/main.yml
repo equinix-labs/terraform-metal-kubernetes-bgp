@@ -1,4 +1,4 @@
-name: Terraform fmt
+name: Terraform Check
 
 on:
   pull_request:
@@ -25,3 +25,14 @@ jobs:
       uses: hashicorp/terraform-github-actions/init@v0.3.7
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: terraform validate
+      uses: hashicorp/terraform-github-actions/validate@v0.3.7
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      needs: init
