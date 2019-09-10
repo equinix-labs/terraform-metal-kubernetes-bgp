@@ -7,7 +7,6 @@ on:
 
 jobs:
   fmt:
-
     runs-on: ubuntu-latest
     
     steps:
@@ -16,3 +15,15 @@ jobs:
       uses: hashicorp/terraform-github-actions/fmt@v0.3.7
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: terraform fmt
+
+  init:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: terraform init
+      uses: hashicorp/terraform-github-actions/init@v0.3.7
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: terraform init
