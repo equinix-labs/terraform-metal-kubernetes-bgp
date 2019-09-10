@@ -28,6 +28,7 @@ jobs:
         
   validate:
     runs-on: ubuntu-latest
+    needs: init
     
     steps:
     - uses: actions/checkout@v1
@@ -35,4 +36,3 @@ jobs:
       uses: hashicorp/terraform-github-actions/validate@v0.3.7
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      needs: init
