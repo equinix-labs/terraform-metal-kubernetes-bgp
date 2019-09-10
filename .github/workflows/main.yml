@@ -29,3 +29,8 @@ jobs:
       uses: hashicorp/terraform-github-actions/validate@v0.3.7
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: terraform plan
+      uses: hashicorp/terraform-github-actions/plan@v0.3.7
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TF_VAR_auth_token: ${{ secretes.PACKET_API_KEY }}
