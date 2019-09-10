@@ -15,7 +15,6 @@ jobs:
       uses: hashicorp/terraform-github-actions/fmt@v0.3.7
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: terraform fmt
 
   init:
     runs-on: ubuntu-latest
@@ -26,4 +25,3 @@ jobs:
       uses: hashicorp/terraform-github-actions/init@v0.3.7
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: terraform init
