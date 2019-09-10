@@ -1,0 +1,16 @@
+name: Terraform fmt
+
+on:
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  fmt:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run "terraform fmt"
+      uses: hashicorp/terraform-github-actions/fmt@v0.3.7
