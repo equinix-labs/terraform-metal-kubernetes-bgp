@@ -1,7 +1,7 @@
 resource "null_resource" "setup_calico" {
   connection {
     user = "root"
-    host = "${packet_device.k8s_controller.access_public_ipv4}"
+    host = packet_device.k8s_controller.access_public_ipv4
   }
 
   provisioner "file" {
@@ -15,5 +15,5 @@ resource "null_resource" "setup_calico" {
     ]
   }
 
-  depends_on = ["packet_device.k8s_controller"]
+  depends_on = [packet_device.k8s_controller]
 }

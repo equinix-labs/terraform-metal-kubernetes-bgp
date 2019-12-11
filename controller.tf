@@ -4,17 +4,17 @@ variable "hostname" {
 
 // Setup the kubernetes controller node
 resource "packet_device" "k8s_controller" {
-  project_id       = "${packet_project.kubenet.id}"
-  facilities       = "${var.facilities}"
-  plan             = "${var.controller_plan}"
+  project_id       = packet_project.kubenet.id
+  facilities       = var.facilities
+  plan             = var.controller_plan
   operating_system = "ubuntu_16_04"
-  hostname         = "${format("%s-%s", "${var.facilities[0]}", "${var.hostname}")}"
+  hostname         = format("%s-%s", var.facilities[0], var.hostname)
   billing_cycle    = "hourly"
   tags             = ["kubernetes", "k8s", "controller"]
 
   connection {
     user = "root"
-    host = "${packet_device.k8s_controller.access_public_ipv4}"
+    host = packet_device.k8s_controller.access_public_ipv4
   }
 
   provisioner "file" {
@@ -23,17 +23,17 @@ resource "packet_device" "k8s_controller" {
   }
 
   provisioner "file" {
-    content     = "${data.template_file.install_docker.rendered}"
+    content     = data.template_file.install_docker.rendered
     destination = "/tmp/install-docker.sh"
   }
 
   provisioner "file" {
-    content     = "${data.template_file.install_kubernetes.rendered}"
+    content     = data.template_file.install_kubernetes.rendered
     destination = "/tmp/setup-kube.sh"
   }
 
   provisioner "file" {
-    content     = "${data.template_file.setup_kubeadm.rendered}"
+    content     = data.template_file.setup_kubeadm.rendered
     destination = "/tmp/setup-kubeadm.sh"
   }
 
@@ -58,15 +58,15 @@ data "external" "kubeadm_join" {
   program = ["./scripts/kubeadm-token.sh"]
 
   query = {
-    host = "${packet_device.k8s_controller.access_public_ipv4}"
+    host = packet_device.k8s_controller.access_public_ipv4
   }
 
   # Make sure to only run this after the controller is up and setup
-  depends_on = ["packet_device.k8s_controller"]
+  depends_on = [packet_device.k8s_controller]
 }
 
 data "template_file" "setup_kubeadm" {
-  template = "${file("${path.module}/templates/setup-kubeadm.sh.tpl")}"
+  template = file("${path.module}/templates/setup-kubeadm.sh.tpl")
 
   vars = {
     kubernetes_version      = "v${var.kubernetes_version}"
