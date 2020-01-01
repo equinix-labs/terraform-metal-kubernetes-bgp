@@ -5,6 +5,8 @@ echo "[----- Begin install-docker.sh ----]"
 
 echo "Installing Docker ${docker_version}"
 
+echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
+
 # Based on from https://kubernetes.io/docs/setup/cri/#docker
 
 # Install Docker CE
