@@ -62,6 +62,15 @@ resource "null_resource" "setup_worker" {
       host = packet_device.k8s_controller.access_public_ipv4
     }
   }
+
+  # add felix dikastest container connectivity
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir -p /usr/libexec/kubernetes/kubelet-plugins/volume/exec/nodeagent~uds",
+      "docker run --rm -v /usr/libexec/kubernetes/kubelet-plugins/volume/exec/nodeagent~uds:/host/driver calico/pod2daemon-flexvol:v3.8.0",
+    ]
+  }
+
 }
 
 # We need to get the private IPv4 Gateway of each worker
