@@ -3,7 +3,7 @@ resource "packet_device" "k8s_workers" {
   facilities       = var.facilities
   count            = var.worker_count
   plan             = var.worker_plan
-  operating_system = "ubuntu_16_04"
+  operating_system = "ubuntu_18_04"
   hostname         = format("%s-%s-%d", "${var.facilities[0]}", "worker", count.index)
   billing_cycle    = "hourly"
   tags             = ["kubernetes", "k8s", "worker"]
