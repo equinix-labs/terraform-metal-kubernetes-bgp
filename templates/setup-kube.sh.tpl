@@ -31,4 +31,6 @@ apt-get install -y \
 # Make the kubelet use only the private IP to run it's management controller pods
 echo "KUBELET_EXTRA_ARGS=\"--node-ip=$LOCAL_IP --address=$LOCAL_IP\"" > /etc/default/kubelet
 
+# enable autocompletion for kubectl
+echo "source <(kubectl completion bash)" >> ~/.bashrc
 echo "[---- Done setting up kubernetes configurations -----]"
