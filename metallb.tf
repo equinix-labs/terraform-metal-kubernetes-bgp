@@ -56,7 +56,7 @@ resource "null_resource" "setup_metallb" {
     ]
   }
 
-  depends_on = ["null_resource.setup_calico_metallb"]
+  depends_on = [null_resource.setup_calico_metallb]
 }
 
 # Add each node's peer to as a Calico bgppeer
