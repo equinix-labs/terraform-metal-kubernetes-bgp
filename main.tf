@@ -1,10 +1,12 @@
 provider "packet" {
-  auth_token = "${var.auth_token}"
+  auth_token = var.auth_token
 }
 
 resource "packet_project" "kubenet" {
+  organization_id = var.organization_id
+  
   name = "k8s-bgp"
-
+  
   bgp_config {
     deployment_type = "local"
     asn             = 65000
@@ -34,7 +36,7 @@ data "template_file" "install_docker" {
   template = "${file("${path.module}/templates/install-docker.sh.tpl")}"
 
   vars = {
-    docker_version = "${var.docker_version}"
+    docker_version = var.docker_version
   }
 }
 
@@ -42,6 +44,6 @@ data "template_file" "install_kubernetes" {
   template = "${file("${path.module}/templates/setup-kube.sh.tpl")}"
 
   vars = {
-    kubernetes_version = "${var.kubernetes_version}"
+    kubernetes_version = var.kubernetes_version
   }
 }
