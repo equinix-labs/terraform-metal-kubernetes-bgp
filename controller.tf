@@ -64,7 +64,7 @@ data "external" "kubeadm_join" {
   }
 
   # Make sure to only run this after the controller is up and setup
-  depends_on = packet_device.k8s_controller
+  depends_on = [packet_device.k8s_controller]
 }
 
 data "template_file" "setup_kubeadm" {
