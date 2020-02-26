@@ -2,6 +2,10 @@ variable "auth_token" {
   description = "Your Packet API key"
 }
 
+variable "organization_id"{
+  description = "Your Packet organization where the project k8s-bgp will be created"
+}
+
 variable "docker_version" {
   default = "18.06.2"
 }
