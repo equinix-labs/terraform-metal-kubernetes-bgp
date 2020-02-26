@@ -31,7 +31,7 @@ resource "null_resource" "chmod" {
   depends_on = [local_file.private_key_pem]
 
   triggers = {
-    local_file_private_key_pem = local_file.private_key_pem
+    local_file_private_key_pem = "local_file.private_key_pem"
   }
 
   provisioner "local-exec" {
