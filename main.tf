@@ -38,7 +38,7 @@ variable "worker_plan" {
 
 // General template used to install docker on Ubuntu 16.04
 data "template_file" "install_docker" {
-  template = "${file("${path.module}/templates/install-docker.sh.tpl")}"
+  template = file("${path.module}/templates/install-docker.sh.tpl")
 
   vars = {
     docker_version = var.docker_version
@@ -46,7 +46,7 @@ data "template_file" "install_docker" {
 }
 
 data "template_file" "install_kubernetes" {
-  template = "${file("${path.module}/templates/setup-kube.sh.tpl")}"
+  template = file("${path.module}/templates/setup-kube.sh.tpl")
 
   vars = {
     kubernetes_version = var.kubernetes_version
