@@ -13,6 +13,11 @@ resource "packet_project" "kubenet" {
   }
 }
 
+resource "packet_ssh_key" "default" {
+  name       = "default"
+  public_key = tls_private_key.default.public_key_openssh
+}
+
 variable "facilities" {
   default = ["ewr1"]
 }
