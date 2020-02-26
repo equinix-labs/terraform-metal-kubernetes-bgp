@@ -2,7 +2,7 @@ resource "null_resource" "setup_calico" {
   connection {
     type = "ssh"
     user = "root"
-    host = "${packet_device.k8s_controller.access_public_ipv4}"
+    host = packet_device.k8s_controller.access_public_ipv4
     private_key = tls_private_key.default.private_key_pem
   }
 
