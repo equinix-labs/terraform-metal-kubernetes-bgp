@@ -45,7 +45,7 @@ resource "null_resource" "setup_metallb" {
   }
 
   provisioner "file" {
-    content     = "${data.template_file.metallb_config.rendered}"
+    content     = data.template_file.metallb_config.rendered
     destination = "/tmp/metallb-config.yaml"
   }
 
@@ -86,7 +86,7 @@ resource "null_resource" "calico_node_peers" {
 }
 
 data "template_file" "calico_metallb" {
-  template = "${file("${path.module}/templates/calico-metallb.yaml.tpl")}"
+  template = file("${path.module}/templates/calico-metallb.yaml.tpl")
 
   vars = {
     cidr = packet_reserved_ip_block.load_balancer_ips.cidr_notation
@@ -94,7 +94,7 @@ data "template_file" "calico_metallb" {
 }
 
 data "template_file" "metallb_config" {
-  template = "${file("${path.module}/templates/metallb-config.yaml.tpl")}"
+  template = file("${path.module}/templates/metallb-config.yaml.tpl")
 
   vars = {
     cidr = packet_reserved_ip_block.load_balancer_ips.cidr_notation
