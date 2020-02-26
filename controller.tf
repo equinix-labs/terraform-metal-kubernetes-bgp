@@ -8,14 +8,14 @@ resource "packet_device" "k8s_controller" {
   facilities       = var.facilities
   plan             = var.controller_plan
   operating_system = "ubuntu_16_04"
-  hostname         = "${format("%s-%s", var.facilities[0], var.hostname)}"
+  hostname         = format("%s-%s", var.facilities[0], var.hostname)
   billing_cycle    = "hourly"
   tags             = ["kubernetes", "k8s", "controller"]
 
   connection {
     type = "ssh"
     user = "root"
-    host = "${packet_device.k8s_controller.access_public_ipv4}"
+    host = packet_device.k8s_controller.access_public_ipv4
     private_key = tls_private_key.default.private_key_pem
   }
 
@@ -25,17 +25,17 @@ resource "packet_device" "k8s_controller" {
   }
 
   provisioner "file" {
-    content     = "${data.template_file.install_docker.rendered}"
+    content     = data.template_file.install_docker.rendered
     destination = "/tmp/install-docker.sh"
   }
 
   provisioner "file" {
-    content     = "${data.template_file.install_kubernetes.rendered}"
+    content     = data.template_file.install_kubernetes.rendered
     destination = "/tmp/setup-kube.sh"
   }
 
   provisioner "file" {
-    content     = "${data.template_file.setup_kubeadm.rendered}"
+    content     = data.template_file.setup_kubeadm.rendered
     destination = "/tmp/setup-kubeadm.sh"
   }
 
@@ -68,7 +68,7 @@ data "external" "kubeadm_join" {
 }
 
 data "template_file" "setup_kubeadm" {
-  template = "${file("${path.module}/templates/setup-kubeadm.sh.tpl")}"
+  template = file("${path.module}/templates/setup-kubeadm.sh.tpl")
 
   vars = {
     kubernetes_version      = var.kubernetes_version
