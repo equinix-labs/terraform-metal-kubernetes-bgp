@@ -14,7 +14,7 @@ resource "packet_project" "kubenet" {
 }
 
 resource "packet_ssh_key" "default" {
-  name       = "default"
+  name       = "k8s-bgp-cluster-access-key"
   public_key = tls_private_key.default.public_key_openssh
 }
 
