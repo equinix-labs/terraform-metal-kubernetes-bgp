@@ -56,7 +56,7 @@ resource "null_resource" "setup_worker" {
       "kubectl get nodes -o wide",
     ]
 
-    on_failure = "continue"
+    on_failure = continue
 
     connection {
       type = "ssh"
