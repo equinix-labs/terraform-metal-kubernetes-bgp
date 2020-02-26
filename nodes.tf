@@ -4,7 +4,7 @@ resource "packet_device" "k8s_workers" {
   count            = var.worker_count
   plan             = var.worker_plan
   operating_system = "ubuntu_16_04"
-  hostname         = "${format("%s-%s-%d", var.facilities[0], "worker", count.index)}"
+  hostname         = format("%s-%s-%d", var.facilities[0], "worker", count.index)
   billing_cycle    = "hourly"
   tags             = ["kubernetes", "k8s", "worker"]
 }
@@ -16,7 +16,7 @@ resource "null_resource" "setup_worker" {
   connection {
     type = "ssh"
     user = "root"
-    host = "${element(packet_device.k8s_workers.*.access_public_ipv4, count.index)}"
+    host = element(packet_device.k8s_workers.*.access_public_ipv4, count.index)
     private_key = tls_private_key.default.private_key_pem
   }
 
@@ -26,12 +26,12 @@ resource "null_resource" "setup_worker" {
   }
 
   provisioner "file" {
-    content     = "${data.template_file.install_docker.rendered}"
+    content     = data.template_file.install_docker.rendered
     destination = "/tmp/install-docker.sh"
   }
 
   provisioner "file" {
-    content     = "${data.template_file.install_kubernetes.rendered}"
+    content     = data.template_file.install_kubernetes.rendered
     destination = "/tmp/setup-kube.sh"
   }
 
@@ -73,6 +73,6 @@ data "external" "private_ipv4_gateway" {
   program = ["${path.module}/scripts/gateway.sh"]
 
   query = {
-    host = "${element(packet_device.k8s_workers.*.access_public_ipv4, count.index)}"
+    host = element(packet_device.k8s_workers.*.access_public_ipv4, count.index)
   }
 }
