@@ -1,26 +1,28 @@
 # Get some public IPs to use for our load balancer
 resource "packet_reserved_ip_block" "load_balancer_ips" {
-  project_id = "${packet_project.kubenet.id}"
-  facility   = "${var.facilities[0]}"
+  project_id = packet_project.kubenet.id
+  facility   = var.facilities[0]
   quantity   = 2
 }
 
 # Enable BGP on each worker node
 resource "packet_bgp_session" "kube_bgp" {
-  count          = "${var.worker_count}"
-  device_id      = "${packet_device.k8s_workers.*.id[count.index]}"
+  count          = var.worker_count
+  device_id      = packet_device.k8s_workers.*.id[count.index]
   address_family = "ipv4"
 }
 
 # Add Calico configs to make MetalLB work
 resource "null_resource" "setup_calico_metallb" {
   connection {
+    type = "ssh"
     user = "root"
-    host = "${packet_device.k8s_controller.access_public_ipv4}"
+    host = packet_device.k8s_controller.access_public_ipv4
+    private_key = tls_private_key.default.private_key_pem
   }
 
   provisioner "file" {
-    content     = "${data.template_file.calico_metallb.rendered}"
+    content     = data.template_file.calico_metallb.rendered
     destination = "/tmp/calico/metallb.yaml"
   }
 
@@ -30,14 +32,16 @@ resource "null_resource" "setup_calico_metallb" {
     ]
   }
 
-  depends_on = ["null_resource.setup_worker"]
+  depends_on = [null_resource.setup_worker]
 }
 
 # Deploy MetalLB
 resource "null_resource" "setup_metallb" {
   connection {
+    type = "ssh"
     user = "root"
-    host = "${packet_device.k8s_controller.access_public_ipv4}"
+    host = packet_device.k8s_controller.access_public_ipv4
+    private_key = tls_private_key.default.private_key_pem
   }
 
   provisioner "file" {
@@ -57,11 +61,13 @@ resource "null_resource" "setup_metallb" {
 
 # Add each node's peer to as a Calico bgppeer
 resource "null_resource" "calico_node_peers" {
-  count = "${var.worker_count}"
+  count = var.worker_count
 
   connection {
+    type = "ssh"
     user = "root"
-    host = "${packet_device.k8s_controller.access_public_ipv4}"
+    host = packet_device.k8s_controller.access_public_ipv4
+    private_key = tls_private_key.default.private_key_pem
   }
 
   provisioner "file" {
@@ -76,14 +82,14 @@ resource "null_resource" "calico_node_peers" {
     ]
   }
 
-  depends_on = ["null_resource.setup_calico_metallb"]
+  depends_on = [null_resource.setup_calico_metallb]
 }
 
 data "template_file" "calico_metallb" {
   template = "${file("${path.module}/templates/calico-metallb.yaml.tpl")}"
 
   vars = {
-    cidr = "${packet_reserved_ip_block.load_balancer_ips.cidr_notation}"
+    cidr = packet_reserved_ip_block.load_balancer_ips.cidr_notation
   }
 }
 
@@ -91,6 +97,6 @@ data "template_file" "metallb_config" {
   template = "${file("${path.module}/templates/metallb-config.yaml.tpl")}"
 
   vars = {
-    cidr = "${packet_reserved_ip_block.load_balancer_ips.cidr_notation}"
+    cidr = packet_reserved_ip_block.load_balancer_ips.cidr_notation
   }
 }
