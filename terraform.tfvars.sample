@@ -1,4 +1,5 @@
 auth_token = "PACKET_AUTH_TOKEN"
+organization_id = "PACKET_ORG_ID"
 facilities = ["ewr1"]
 kubernetes_version = "1.15.3"
 kubernetes_port = "6443"
@@ -6,4 +7,3 @@ kubernetes_dns_ip = "192.168.0.10"
 kubernetes_cluster_cidr = "172.16.0.0/12"
 kubernetes_service_cidr = "192.168.0.0/16"
 kubernetes_dns_domain = "cluster.local"
-
