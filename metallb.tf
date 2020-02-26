@@ -18,7 +18,7 @@ resource "null_resource" "setup_calico_metallb" {
     type = "ssh"
     user = "root"
     host = packet_device.k8s_controller.access_public_ipv4
-    private_key = tls_private_key.default.private_key_pem
+    private_key = tls_private_key.k8s_cluster_access_key.private_key_pem
   }
 
   provisioner "file" {
@@ -41,7 +41,7 @@ resource "null_resource" "setup_metallb" {
     type = "ssh"
     user = "root"
     host = packet_device.k8s_controller.access_public_ipv4
-    private_key = tls_private_key.default.private_key_pem
+    private_key = tls_private_key.k8s_cluster_access_key.private_key_pem
   }
 
   provisioner "file" {
@@ -67,7 +67,7 @@ resource "null_resource" "calico_node_peers" {
     type = "ssh"
     user = "root"
     host = packet_device.k8s_controller.access_public_ipv4
-    private_key = tls_private_key.default.private_key_pem
+    private_key = tls_private_key.k8s_cluster_access_key.private_key_pem
   }
 
   provisioner "file" {
