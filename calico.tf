@@ -17,5 +17,5 @@ resource "null_resource" "setup_calico" {
     ]
   }
 
-  depends_on = packet_device.k8s_controller
+  depends_on = [packet_device.k8s_controller]
 }
