@@ -1,6 +1,9 @@
 auth_token = "PACKET_AUTH_TOKEN"
 organization_id = "PACKET_ORG_ID"
 facilities = ["ewr1"]
+controller_plan = "t1.small.x86"
+worker_plan = "t1.small.x86"
+worker_count = 2
 kubernetes_version = "1.15.3"
 kubernetes_port = "6443"
 kubernetes_dns_ip = "192.168.0.10"
