@@ -7,12 +7,12 @@ variable "organization_id"{
 }
 
 variable "docker_version" {
-  default = "18.06.2"
+  default = "19.03.10"
 }
 
 variable "kubernetes_version" {
   description = "Kubernetes Version"
-  default     = "1.14.1"
+  default     = "1.18.3"
 }
 
 variable "kubernetes_port" {
