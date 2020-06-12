@@ -57,7 +57,7 @@ resource "packet_device" "k8s_controller" {
 }
 
 data "external" "kubeadm_join" {
-  program = ["./scripts/kubeadm-token.sh"]
+  program = ["${path.module}/scripts/kubeadm-token.sh"]
 
   query = {
     host = packet_device.k8s_controller.access_public_ipv4
