@@ -5,7 +5,7 @@ provider "packet" {
 resource "packet_project" "kubenet" {
   organization_id = var.organization_id
   
-  name = "k8s-bgp"
+  name = var.project_name
   
   bgp_config {
     deployment_type = "local"
