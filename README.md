@@ -32,6 +32,7 @@ Make a copy of `terraform.tfvars.sample` as `terraform.tfvars`  and set the `aut
 ```sh
 auth_token = "PACKET_AUTH_TOKEN"
 organization_id = "PACKET_ORG_ID"
+project_name = "k8s-bgp"
 facilities = ["ewr1"]
 controller_plan = "t1.small.x86"
 worker_plan = "t1.small.x86"
