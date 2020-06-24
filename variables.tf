@@ -2,11 +2,11 @@ variable "auth_token" {
   description = "Your Packet API key"
 }
 
-variable "organization_id"{
+variable "organization_id" {
   description = "Your Packet organization where the project k8s-bgp will be created"
 }
 
-variable "project_name"{
+variable "project_name" {
   description = "The project name, k8s-bgp is used as default if not specified"
   default = "k8s-bgp"
 }
