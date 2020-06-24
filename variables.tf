@@ -2,13 +2,22 @@ variable "auth_token" {
   description = "Your Packet API key"
 }
 
+variable "organization_id" {
+  description = "Your Packet organization where the project k8s-bgp will be created"
+}
+
+variable "project_name" {
+  description = "The project name, k8s-bgp is used as default if not specified"
+  default = "k8s-bgp"
+}
+
 variable "docker_version" {
-  default = "18.06.2"
+  default = "19.03.10"
 }
 
 variable "kubernetes_version" {
   description = "Kubernetes Version"
-  default     = "1.14.1"
+  default     = "1.18.3"
 }
 
 variable "kubernetes_port" {

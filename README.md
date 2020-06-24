@@ -5,9 +5,9 @@ This guide can be used as a reference to deploy Kubernetes on Packet bare-metal 
 
 | Component  | Version |
 | ---------- | ------- |
-| Kubernetes | v1.15.3 |
-| Calico     | v3.8.2  |
-| MetalLB    | v0.8.1  |
+| Kubernetes | v1.18.3 |
+| Calico     | v3.13.1 |
+| MetalLB    | v0.9.3  |
 
 Kubernetes Network:
 
@@ -27,16 +27,23 @@ TL;DR
 
 This will deploy a cluster of 3, 1 master and 2 worker nodes. It will allow you to use the service type `LoadBalancer`.
 
-Make a copy of `terraform.tfvars.sample` as `terraform.tfvars`  and set the `auth_token`.
+Make a copy of `terraform.tfvars.sample` as `terraform.tfvars`  and set the `auth_token` as well as `organization_id`. You can also configure other options like the server type, amount of worker nodes, kubernetes version etc.
 
 ```sh
 auth_token = "PACKET_AUTH_TOKEN"
+organization_id = "PACKET_ORG_ID"
+project_name = "k8s-bgp"
 facilities = ["ewr1"]
-kubernetes_version = "1.15.3"
+controller_plan = "t1.small.x86"
+worker_plan = "t1.small.x86"
+worker_count = 2
+docker_version = "19.03.10"
+kubernetes_version = "1.18.3"
 kubernetes_port = "6443"
 kubernetes_dns_ip = "192.168.0.10"
 kubernetes_cluster_cidr = "172.16.0.0/12"
 kubernetes_service_cidr = "192.168.0.0/16"
+kubernetes_dns_domain = "cluster.local"
 ```
 
 ```sh
