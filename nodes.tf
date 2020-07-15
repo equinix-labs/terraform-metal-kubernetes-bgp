@@ -40,6 +40,11 @@ resource "null_resource" "setup_worker" {
     destination = "/tmp/install-calicoctl.sh"
   }
 
+  provisioner "file" {
+    source      = "${path.module}/scripts/bgp-routes.sh"
+    destination = "/tmp/bgp-routes.sh"
+  }
+  
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/*.sh",
@@ -48,6 +53,9 @@ resource "null_resource" "setup_worker" {
       "/tmp/setup-kube.sh",
       "${data.external.kubeadm_join.result.command}",
       "/tmp/install-calicoctl.sh",
+
+# Only enable the execution of this next line if you see issues with BGP peering
+#      "/tmp/bgp-routes.sh",
     ]
   }
 
