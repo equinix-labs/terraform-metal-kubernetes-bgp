@@ -55,6 +55,7 @@ resource "null_resource" "setup_worker" {
       "/tmp/install-calicoctl.sh",
 
 # Only enable the execution of this next line if you see issues with BGP peering
+# Some BGP speakers will not respect source routing so adding static routes can help.
 #      "/tmp/bgp-routes.sh",
     ]
   }
