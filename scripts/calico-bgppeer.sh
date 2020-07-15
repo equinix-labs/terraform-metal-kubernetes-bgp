@@ -19,7 +19,7 @@ metadata:
   name: $HOSTNAME-peer-$i
 spec:
   peerIP: $(curl -X GET -H "X-Auth-Token: ${API_KEY}" "https://api.packet.net/devices/${INSTANCE_UUID}/bgp/neighbors" | jq -r ".bgp_neighbors[].peer_ips[$i]")
-  node: $HOSTNAME-peer-$i
+  node: $HOSTNAME
   asNumber: 65530
 EOF
 
