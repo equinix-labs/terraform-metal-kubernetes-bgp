@@ -7,7 +7,7 @@ resource "packet_device" "k8s_controller" {
   project_id       = packet_project.kubenet.id
   facilities       = var.facilities
   plan             = var.controller_plan
-  operating_system = "ubuntu_16_04"
+  operating_system = "ubuntu_20_04"
   hostname         = format("%s-%s", var.facilities[0], var.hostname)
   billing_cycle    = "hourly"
   tags             = ["kubernetes", "k8s", "controller"]
