@@ -3,7 +3,7 @@ resource "packet_device" "k8s_workers" {
   facilities       = var.facilities
   count            = var.worker_count
   plan             = var.worker_plan
-  operating_system = "ubuntu_16_04"
+  operating_system = "ubuntu_20_04"
   hostname         = format("%s-%s-%d", var.facilities[0], "worker", count.index)
   billing_cycle    = "hourly"
   tags             = ["kubernetes", "k8s", "worker"]
@@ -40,6 +40,11 @@ resource "null_resource" "setup_worker" {
     destination = "/tmp/install-calicoctl.sh"
   }
 
+  provisioner "file" {
+    source      = "${path.module}/scripts/bgp-routes.sh"
+    destination = "/tmp/bgp-routes.sh"
+  }
+  
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/*.sh",
@@ -48,6 +53,10 @@ resource "null_resource" "setup_worker" {
       "/tmp/setup-kube.sh",
       "${data.external.kubeadm_join.result.command}",
       "/tmp/install-calicoctl.sh",
+
+# Only enable the execution of this next line if you see issues with BGP peering
+# Some BGP speakers will not respect source routing so adding static routes can help.
+#      "/tmp/bgp-routes.sh",
     ]
   }
 

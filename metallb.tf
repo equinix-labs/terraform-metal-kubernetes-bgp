@@ -80,7 +80,7 @@ resource "null_resource" "calico_node_peers" {
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/calico/bgppeer-${count.index}.sh",
-      "/tmp/calico/bgppeer-${count.index}.sh ${element(packet_device.k8s_workers.*.hostname, count.index)} ${element(data.external.private_ipv4_gateway.*.result.peer_ip, count.index)}",
+      "/tmp/calico/bgppeer-${count.index}.sh ${var.auth_token} ${element(packet_device.k8s_workers.*.id, count.index)} ${element(packet_device.k8s_workers.*.hostname, count.index)}",
     ]
   }
 
