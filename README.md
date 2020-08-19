@@ -338,7 +338,7 @@ spec:
 EOF
 ```
 
-For the new Equinix IBX locations, BGP peering is done through 2 link-local addresses, 169.254.255.1 and 169.254.255.2 where each IP represents one of the 2 top of rack routers for redundancy. For the Calico BGPPeer, the name under the metadata section changes for each peer but the node name under the spec section needs to remain the same as it is targeting the same node.
+For the new Equinix IBX locations, BGP peering is done through 2 link-local addresses, 169.254.255.1 and 169.254.255.2 where each IP represents one of the 2 top of rack routers for redundancy. Those 2 link-local peering IPs are always the same for every instance and in all the new Equinix IBX locations. For the Calico BGPPeer, the name under the metadata section changes for each peer but the node name under the spec section needs to remain the same as it is targeting the same node.
 
 For calico, you will just need to add both peers under the same node spec hostname. So it would be something like this:
 
