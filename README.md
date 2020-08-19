@@ -5,8 +5,8 @@ This guide can be used as a reference to deploy Kubernetes on Packet bare-metal 
 
 | Component  | Version |
 | ---------- | ------- |
-| Kubernetes | v1.18.3 |
-| Calico     | v3.13.1 |
+| Kubernetes | v1.18.8 |
+| Calico     | v3.15.1 |
 | MetalLB    | v0.9.3  |
 
 Kubernetes Network:
@@ -302,11 +302,15 @@ spec:
 EOF
 ```
 
-We will also need Calico to peer with each of our servers ToR Router which requires a per node config
+We will also need Calico to peer with each of our servers ToR Router which requires a per node config. You can get BGP peer info directly from the API:
+
+```
+https://api.packet.net/devices/${INSTANCE_UUID}/bgp/neighbors
+```
 
 Setup the BGP peers for each worker node.
 
-Example Calico peer config:
+Example Calico peer config for older Packet locations where peering is done through the private ipv4 gateway adress:
 
 ```sh
 cat << EOF | DATASTORE_TYPE=kubernetes KUBECONFIG=~/.kube/config calicoctl create -f -
@@ -329,6 +333,63 @@ metadata:
   name: ewr1-worker-1
 spec:
   peerIP: 10.99.14.6
+  node: ewr1-worker-1
+  asNumber: 65530
+EOF
+```
+
+For the new Equinix IBX locations, BGP peering is done through 2 link-local addresses, 169.254.255.1 and 169.254.255.2 where each IP represents one of the 2 top of rack routers for redundancy. For the Calico BGPPeer, the name under the metadata section changes for each peer but the node name under the spec section needs to remain the same as it is targeting the same node.
+
+For calico, you will just need to add both peers under the same node spec hostname. So it would be something like this:
+
+```sh
+cat << EOF | DATASTORE_TYPE=kubernetes KUBECONFIG=~/.kube/config calicoctl create -f -
+apiVersion: projectcalico.org/v3
+kind: BGPPeer
+metadata:
+  name: ewr1-worker-0-peer1
+spec:
+  peerIP: 169.254.255.1
+  node: ewr1-worker-0
+  asNumber: 65530
+EOF
+```
+
+```sh
+cat << EOF | DATASTORE_TYPE=kubernetes KUBECONFIG=~/.kube/config calicoctl create -f -
+apiVersion: projectcalico.org/v3
+kind: BGPPeer
+metadata:
+  name: ewr1-worker-0-peer2
+spec:
+  peerIP: 169.254.255.2
+  node: ewr1-worker-0
+  asNumber: 65530
+EOF
+```
+
+
+```sh
+cat << EOF | DATASTORE_TYPE=kubernetes KUBECONFIG=~/.kube/config calicoctl create -f -
+apiVersion: projectcalico.org/v3
+kind: BGPPeer
+metadata:
+  name: ewr1-worker-1-peer1
+spec:
+  peerIP: 169.254.255.1
+  node: ewr1-worker-1
+  asNumber: 65530
+EOF
+```
+
+```sh
+cat << EOF | DATASTORE_TYPE=kubernetes KUBECONFIG=~/.kube/config calicoctl create -f -
+apiVersion: projectcalico.org/v3
+kind: BGPPeer
+metadata:
+  name: ewr1-worker-1-peer2
+spec:
+  peerIP: 169.254.255.2
   node: ewr1-worker-1
   asNumber: 65530
 EOF
