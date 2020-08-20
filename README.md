@@ -24,7 +24,7 @@ Packet Network:
 
 Operating System:
 
-This terraform script has been verified to work with ubuntu 18.04 (default) and 16.04. Ubuntu 20.04 works for most Packet instance types but the c2.medium.x86 seems to have pod network issues with ubuntu 20.04 (possibly due to iptables bug).
+This terraform script has been verified to work with ubuntu 18.04 (default) and 16.04. Ubuntu 20.04 works for most Packet instance types but the c2.medium.x86 seems to have pod network issues (unable to reach TCP port 80 between pods) with ubuntu 20.04 (possibly due to iptables bug).
 
 TL;DR
 ----
