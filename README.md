@@ -1,9 +1,9 @@
 ![](https://img.shields.io/badge/Stability-Experimental-red.svg)
 
-Kubernetes on Packet
-====================
+Kubernetes on Equinix Metal
+===========================
 
-This guide can be used as a reference to deploy Kubernetes on Packet bare-metal servers in a single facility.  This repository is [Experimental](https://github.com/packethost/standards/blob/master/experimental-statement.md) meaning that it's based on untested ideas or techniques and not yet established or finalized or involves a radically new and innovative style! This means that support is best effort (at best!) and we strongly encourage you to NOT use this in production.
+This guide can be used as a reference to deploy Kubernetes on Equinix Metal bare-metal servers in a single facility.  This repository is [Experimental](https://github.com/packethost/standards/blob/master/experimental-statement.md) meaning that it's based on untested ideas or techniques and not yet established or finalized or involves a radically new and innovative style! This means that support is best effort (at best!) and we strongly encourage you to NOT use this in production.
 
 | Component  | Version |
 | ---------- | ------- |
@@ -18,15 +18,15 @@ Kubernetes Network:
 | Pod subnet               | 172.16.0.0/12    |
 | Service subnet           | 192.168.0.0/16   |
 
-Packet Network:
+Equinix Metal Network:
 
-| Network                  | Subnet                    |
-| ------------------------ | ------------------------- |
-| Packet Elastic IP(EWR1)  | 147.75.194.92/31(example) |
+| Network                         | Subnet                    |
+| ------------------------------- | ------------------------- |
+| Equinix Metal Elastic IP(EWR1)  | 147.75.194.92/31(example) |
 
 Operating System:
 
-This terraform script has been verified to work with ubuntu 18.04 (default) and 16.04. Ubuntu 20.04 works for most Packet instance types but the c2.medium.x86 seems to have pod network issues (unable to reach TCP port 80 between pods) with ubuntu 20.04 (possibly due to iptables bug).
+This terraform script has been verified to work with ubuntu 18.04 (default) and 16.04. Ubuntu 20.04 works for most Equinix Metal instance types but the c2.medium.x86 seems to have pod network issues (unable to reach TCP port 80 between pods) with ubuntu 20.04 (possibly due to iptables bug).
 
 TL;DR
 ----
@@ -96,9 +96,9 @@ traefik-ingress-service   LoadBalancer   192.168.60.102   147.75.193.148   80:32
 Overall Network Topology
 ------------------------
 
-![alt text](images/network-arch.png "Packet BGP Diagram")
+![alt text](images/network-arch.png "Equinix Metal BGP Diagram")
 
-BGP on Packet uses the private `/31` IPv4 network to peer with. 
+BGP on Equinix Metal uses the private `/31` IPv4 network to peer with. 
 
 As an example in the diagram above the server has the IP `10.99.14.7/31` assign on the server and the gateway is `10.99.14.6/31`, which is the IP your would peer with since that is the IP assigned to the ToR router.
 
@@ -108,7 +108,7 @@ Kubeadm
 We will be using kubeadm to bootstrap the Kubernetes cluster.
 
 To start we will be deploying a single master server with 3 workers.
-We do not want to expose the Kubernetes components over the public internet and because of how the interface and network setup at Packet is we have to make this clear in out config as it by default will listen on all IPs/interfaces.
+We do not want to expose the Kubernetes components over the public internet and because of how the interface and network setup at Equinix Metal is we have to make this clear in out config as it by default will listen on all IPs/interfaces.
 
 Example kubeadm.yaml:
 
@@ -134,12 +134,12 @@ kubeadm join 10.99.14.9:6443 --token tcqfab.8d5qen6tf2gaztam --discovery-token-c
 Kubernetes Network Setup
 ------------------------
 
-Packet has private ASNs setup for users to use.
+Equinix Metal has private ASNs setup for users to use.
 
 ASN:
 
-- 65530: Private Packet ToR
-- 65000: Private Packet Server
+- 65530: Private Equinix Metal ToR
+- 65000: Private Equinix Metal Server
 - 65480: Private MetalLB
 
 Issues:
@@ -316,7 +316,7 @@ https://api.packet.net/devices/${INSTANCE_UUID}/bgp/neighbors
 
 Setup the BGP peers for each worker node.
 
-Example Calico peer config for older Packet locations where peering is done through the private ipv4 gateway adress:
+Example Calico peer config for older Equinix Metal locations where peering is done through the private ipv4 gateway adress:
 
 ```sh
 cat << EOF | DATASTORE_TYPE=kubernetes KUBECONFIG=~/.kube/config calicoctl create -f -
@@ -409,7 +409,7 @@ EOF
 >
 > \- [Why MetalLB?](https://metallb.universe.tf/#why)
 
-At Packet there is no load balancing service provided and so we need to find another way to expose our services via the traditional `LoadBalancer` service type. To achieve this we use the BGP to the server feature.
+At Equinix Metal there is no load balancing service provided and so we need to find another way to expose our services via the traditional `LoadBalancer` service type. To achieve this we use the BGP to the server feature.
 
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml
