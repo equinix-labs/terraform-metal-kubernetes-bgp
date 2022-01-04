@@ -26,7 +26,7 @@ This terraform script has been verified to work with Ubuntu 20.04 (default), 18.
 
 | Network                  | Subnet                    |
 | ------------------------ | ------------------------- |
-| Equinix Metal Elastic IP(SV)  | 147.75.194.92/31(example) |
+| Equinix Metal Elastic IP(NY)  | 147.75.194.92/31(example) |
 
 TL;DR
 ----
