@@ -22,10 +22,12 @@ variable "kubernetes_version" {
 
 variable "kubernetes_port" {
   description = "Kubernetes API Port"
+  default     = "6443"
 }
 
 variable "kubernetes_dns_ip" {
   description = "Kubernetes DNS IP"
+  default     = "192.168.0.10"
 }
 
 variable "kubernetes_cluster_cidr" {
