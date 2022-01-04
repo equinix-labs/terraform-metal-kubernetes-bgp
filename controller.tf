@@ -5,10 +5,10 @@ variable "hostname" {
 // Setup the kubernetes controller node
 resource "metal_device" "k8s_controller" {
   project_id       = metal_project.kubenet.id
-  facilities       = var.facilities
+  metro            = var.metro
   plan             = var.controller_plan
-  operating_system = "ubuntu_18_04"
-  hostname         = format("%s-%s", "${var.facilities[0]}", "${var.hostname}")
+  operating_system = var.metal_os
+  hostname         = format("%s-%s", var.metro, "${var.hostname}")
   billing_cycle    = "hourly"
   tags             = ["kubernetes", "k8s", "controller"]
 

@@ -42,3 +42,26 @@ variable "kubernetes_dns_domain" {
   description = "Kubernetes Internal DNS Domain"
   default     = "cluster.local"
 }
+
+variable "metro" {
+  default = "sv"
+}
+
+variable "worker_count" {
+  default = 2
+}
+
+variable "controller_plan" {
+  description = "Set the Equinix Metal server type for the controller"
+  default     = "c3.small.x86"
+}
+
+variable "worker_plan" {
+  description = "Set the Equinix Metal server type for the workers"
+  default     = "c3.small.x86"
+}
+
+variable "metal_os" {
+  description = "Set the Equinix Metal OS for the controller and workers"
+  default     = "ubuntu_18_04"
+}

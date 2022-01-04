@@ -5,7 +5,7 @@ This repository is [Experimental](https://github.com/packethost/standards/blob/m
 Kubernetes on Equinix Metal
 ====================
 
-This guide can be used as a reference to deploy Kubernetes on Equinix Metal bare-metal servers in a single metro.
+This guide can be used as a reference to deploy Kubernetes on Equinix Metal bare-metal servers across a single metro.
 
 | Component  | Version |
 | ---------- | ------- |
@@ -37,11 +37,11 @@ Make a copy of `terraform.tfvars.sample` as `terraform.tfvars`  and set the `aut
 
 ```sh
 auth_token = "METAL_AUTH_TOKEN"
-organization_id = "PACKET_ORG_ID"
+organization_id = "METAL_ORG_ID"
 project_name = "k8s-bgp"
-facilities = ["ewr1"]
-controller_plan = "t1.small.x86"
-worker_plan = "t1.small.x86"
+metro = "sv"
+controller_plan = "c3.small.x86"
+worker_plan = "c3.small.x86"
 worker_count = 2
 docker_version = "19.03.10"
 kubernetes_version = "1.18.3"

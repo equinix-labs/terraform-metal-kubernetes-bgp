@@ -1,7 +1,7 @@
 # Get some public IPs to use for our load balancer
 resource "metal_reserved_ip_block" "load_balancer_ips" {
   project_id = metal_project.kubenet.id
-  facility   = var.facilities[0]
+  metro      = var.metro
   quantity   = 2
 }
 
