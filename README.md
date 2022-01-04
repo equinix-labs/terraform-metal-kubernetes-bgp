@@ -1,9 +1,11 @@
 ![](https://img.shields.io/badge/Stability-Experimental-red.svg)
 
-Kubernetes on Equinix Metal
-===========================
+This repository is [Experimental](https://github.com/packethost/standards/blob/master/experimental-statement.md) meaning that it's based on untested ideas or techniques and not yet established or finalized or involves a radically new and innovative style! This means that support is best effort (at best!) and we strongly encourage you to NOT use this in production.
 
-This guide can be used as a reference to deploy Kubernetes on Equinix Metal bare-metal servers in a single facility.  This repository is [Experimental](https://github.com/packethost/standards/blob/master/experimental-statement.md) meaning that it's based on untested ideas or techniques and not yet established or finalized or involves a radically new and innovative style! This means that support is best effort (at best!) and we strongly encourage you to NOT use this in production.
+Kubernetes on Equinix Metal
+====================
+
+This guide can be used as a reference to deploy Kubernetes on Equinix Metal bare-metal servers in a single metro.
 
 | Component  | Version |
 | ---------- | ------- |
@@ -18,15 +20,13 @@ Kubernetes Network:
 | Pod subnet               | 172.16.0.0/12    |
 | Service subnet           | 192.168.0.0/16   |
 
-Equinix Metal Network:
-
-| Network                         | Subnet                    |
-| ------------------------------- | ------------------------- |
-| Equinix Metal Elastic IP(EWR1)  | 147.75.194.92/31(example) |
-
 Operating System:
 
-This terraform script has been verified to work with ubuntu 18.04 (default) and 16.04. Ubuntu 20.04 works for most Equinix Metal instance types but the c2.medium.x86 seems to have pod network issues (unable to reach TCP port 80 between pods) with ubuntu 20.04 (possibly due to iptables bug).
+This terraform script has been verified to work with Ubuntu 20.04 (default), 18.04, and 16.04. Ubuntu 20.04 works for most Equinix Metal instance types but the c2.medium.x86 seems to have pod network issues (unable to reach TCP port 80 between pods) with Ubuntu 20.04 (possibly due to iptables bug).
+
+| Network                  | Subnet                    |
+| ------------------------ | ------------------------- |
+| Equinix Metal Elastic IP(SV)  | 147.75.194.92/31(example) |
 
 TL;DR
 ----
@@ -36,7 +36,7 @@ This will deploy a cluster of 3, 1 master and 2 worker nodes. It will allow you 
 Make a copy of `terraform.tfvars.sample` as `terraform.tfvars`  and set the `auth_token` as well as `organization_id`. You can also configure other options like the server type, amount of worker nodes, kubernetes version etc.
 
 ```sh
-auth_token = "PACKET_AUTH_TOKEN"
+auth_token = "METAL_AUTH_TOKEN"
 organization_id = "PACKET_ORG_ID"
 project_name = "k8s-bgp"
 facilities = ["ewr1"]
@@ -61,7 +61,7 @@ You can now use the kubernetes service type `LoadBalancer` and you will be assig
 For example we can deploy the traefik ingress and use that as our public load balancer.
 Here we are using the `DaemonSet` deployment from the traefik [guide](https://docs.traefik.io/user-guide/kubernetes/).
 
-We modified the Service by adding the `metallb.universe.tf/address-pool: packet-public` annotation and type to use `type: LoadBalancer` like so:
+We modified the Service by adding the `metallb.universe.tf/address-pool: metal-public` annotation and type to use `type: LoadBalancer` like so:
 
 ```yaml
 kind: Service
@@ -70,7 +70,7 @@ metadata:
   name: traefik-ingress-service
   namespace: kube-system
   annotations:
-    metallb.universe.tf/address-pool: packet-public
+    metallb.universe.tf/address-pool: metal-public
 spec:
   selector:
     k8s-app: traefik-ingress-lb

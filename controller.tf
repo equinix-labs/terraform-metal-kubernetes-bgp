@@ -3,19 +3,19 @@ variable "hostname" {
 }
 
 // Setup the kubernetes controller node
-resource "packet_device" "k8s_controller" {
-  project_id       = packet_project.kubenet.id
+resource "metal_device" "k8s_controller" {
+  project_id       = metal_project.kubenet.id
   facilities       = var.facilities
   plan             = var.controller_plan
   operating_system = "ubuntu_18_04"
-  hostname         = format("%s-%s", var.facilities[0], var.hostname)
+  hostname         = format("%s-%s", "${var.facilities[0]}", "${var.hostname}")
   billing_cycle    = "hourly"
   tags             = ["kubernetes", "k8s", "controller"]
 
   connection {
-    type = "ssh"
-    user = "root"
-    host = packet_device.k8s_controller.access_public_ipv4
+    type        = "ssh"
+    user        = "root"
+    host        = metal_device.k8s_controller.access_public_ipv4
     private_key = tls_private_key.k8s_cluster_access_key.private_key_pem
   }
 
@@ -60,11 +60,11 @@ data "external" "kubeadm_join" {
   program = ["${path.module}/scripts/kubeadm-token.sh"]
 
   query = {
-    host = packet_device.k8s_controller.access_public_ipv4
+    host = metal_device.k8s_controller.access_public_ipv4
   }
 
   # Make sure to only run this after the controller is up and setup
-  depends_on = [packet_device.k8s_controller]
+  depends_on = [metal_device.k8s_controller]
 }
 
 data "template_file" "setup_kubeadm" {

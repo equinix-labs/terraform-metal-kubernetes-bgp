@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 resource "packet_device" "k8s_workers" {
   project_id       = packet_project.kubenet.id
   facilities       = var.facilities
@@ -5,18 +6,27 @@ resource "packet_device" "k8s_workers" {
   plan             = var.worker_plan
   operating_system = "ubuntu_18_04"
   hostname         = format("%s-%s-%d", var.facilities[0], "worker", count.index)
+=======
+resource "metal_device" "k8s_workers" {
+  project_id       = metal_project.kubenet.id
+  facilities       = var.facilities
+  count            = var.worker_count
+  plan             = var.worker_plan
+  operating_system = "ubuntu_16_04"
+  hostname         = format("%s-%s-%d", "${var.facilities[0]}", "worker", count.index)
+>>>>>>> 47ceb4b (update TF from Packet to Equinix Metal)
   billing_cycle    = "hourly"
   tags             = ["kubernetes", "k8s", "worker"]
 }
 
-# Using a null_resource so the packet_device doesn't not have to wait to be initially provisioned
+# Using a null_resource so the metal_device doesn't not have to wait to be initially provisioned
 resource "null_resource" "setup_worker" {
   count = var.worker_count
 
   connection {
     type = "ssh"
     user = "root"
-    host = element(packet_device.k8s_workers.*.access_public_ipv4, count.index)
+    host = element(metal_device.k8s_workers.*.access_public_ipv4, count.index)
     private_key = tls_private_key.k8s_cluster_access_key.private_key_pem
   }
 
@@ -70,7 +80,7 @@ resource "null_resource" "setup_worker" {
     connection {
       type = "ssh"
       user = "root"
-      host = packet_device.k8s_controller.access_public_ipv4
+      host = metal_device.k8s_controller.access_public_ipv4
       private_key = tls_private_key.k8s_cluster_access_key.private_key_pem
     }
   }
@@ -82,6 +92,6 @@ data "external" "private_ipv4_gateway" {
   program = ["${path.module}/scripts/gateway.sh"]
 
   query = {
-    host = element(packet_device.k8s_workers.*.access_public_ipv4, count.index)
+    host = element(metal_device.k8s_workers.*.access_public_ipv4, count.index)
   }
 }

@@ -3,7 +3,7 @@
 echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
 
 HOSTNAME=$(hostname -s)
-# Get Packet server's private IP address
+# Get Equinix Metal server's private IP address
 LOCAL_IP=$(ip a | grep "inet 10" | cut -d" " -f6 | cut -d"/" -f1)
 
 get_version () {

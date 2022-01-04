@@ -1,12 +1,12 @@
-provider "packet" {
+provider "metal" {
   auth_token = var.auth_token
 }
 
-resource "packet_project" "kubenet" {
+resource "metal_project" "kubenet" {
   organization_id = var.organization_id
-  
+
   name = var.project_name
-  
+
   bgp_config {
     deployment_type = "local"
     asn             = 65000
@@ -27,12 +27,12 @@ variable "worker_count" {
 }
 
 variable "controller_plan" {
-  description = "Set the Packet server type for the controller"
+  description = "Set the Equinix Metal server type for the controller"
   default     = "t1.small.x86"
 }
 
 variable "worker_plan" {
-  description = "Set the Packet server type for the workers"
+  description = "Set the Equinix Metal server type for the workers"
   default     = "t1.small.x86"
 }
 

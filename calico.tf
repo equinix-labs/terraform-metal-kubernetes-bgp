@@ -1,8 +1,8 @@
 resource "null_resource" "setup_calico" {
   connection {
-    type = "ssh"
-    user = "root"
-    host = packet_device.k8s_controller.access_public_ipv4
+    type        = "ssh"
+    user        = "root"
+    host        = metal_device.k8s_controller.access_public_ipv4
     private_key = tls_private_key.k8s_cluster_access_key.private_key_pem
   }
 
@@ -17,5 +17,5 @@ resource "null_resource" "setup_calico" {
     ]
   }
 
-  depends_on = [packet_device.k8s_controller]
+  depends_on = [metal_device.k8s_controller]
 }
