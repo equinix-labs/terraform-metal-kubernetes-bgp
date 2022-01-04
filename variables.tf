@@ -63,5 +63,5 @@ variable "worker_plan" {
 
 variable "metal_os" {
   description = "Set the Equinix Metal OS for the controller and workers"
-  default     = "ubuntu_18_04"
+  default     = "ubuntu_20_04"
 }
