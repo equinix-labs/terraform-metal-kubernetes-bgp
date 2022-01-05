@@ -10,7 +10,7 @@ data:
       peer-asn: 65000
       my-asn: 65480
     address-pools:
-    - name: packet-public
+    - name: metal-public
       protocol: bgp
       addresses:
       - ${cidr}

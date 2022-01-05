@@ -22,7 +22,7 @@ spec:
 apiVersion: projectcalico.org/v3
 kind: IPPool
 metadata:
-  name: metallb-packet-public
+  name: metallb-metal-public
 spec:
   cidr: ${cidr}
   disabled: true

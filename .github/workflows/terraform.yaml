@@ -1,0 +1,38 @@
+name: 'terraform'
+# This workflow verifies that the Terraform configs are valid.
+# https://learn.hashicorp.com/tutorials/terraform/automate-terraform
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    env:
+      TF_IN_AUTOMATION: 1
+      TF_VERSION: ${{ matrix.tf }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        tf: [1.1.2]
+    steps:
+    - name: Checkout from Github
+      uses: actions/checkout@v2
+    - name: Install Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: ${{ env.TF_VERSION }}
+    - name: Check Terraform formatting
+      id: fmt
+      run: terraform fmt
+      continue-on-error: true
+    - name: Initialize Terraform, Modules, and Plugins
+      id: init
+      run: terraform init -input=false
+    - name: Validate Terraform syntax
+      id: validate
+      run: terraform validate -no-color

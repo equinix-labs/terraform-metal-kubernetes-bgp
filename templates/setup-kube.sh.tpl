@@ -3,7 +3,7 @@
 echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
 
 HOSTNAME=$(hostname -s)
-# Get Packet server's private IP address
+# Get Equinix Metal server's private IP address
 LOCAL_IP=$(ip a | grep "inet 10" | cut -d" " -f6 | cut -d"/" -f1)
 
 get_version () {
@@ -20,7 +20,7 @@ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
 #deb http://apt.kubernetes.io/ kubernetes-$(lsb_release -cs) main
 # bionic (18.04) or focal (20.04) repo for ubuntu dont exist yet
-deb http://apt.kubernetes.io/ kubernetes-xenial main
+deb http://apt.kubernetes.io/ kubernetes-${kubernetes_apt_release} main
 EOF
 apt-get update
 apt-get install -y \
