@@ -12,12 +12,17 @@ variable "project_name" {
 }
 
 variable "docker_version" {
-  default = "19.03.10"
+  default = "20.10.12"
 }
 
 variable "kubernetes_version" {
   description = "Kubernetes Version"
   default     = "1.18.3"
+}
+
+variable "kubernetes_apt_release" {
+  description = "apt.kubernetes.io Ubuntu release to use"
+  default     = "xenial"
 }
 
 variable "kubernetes_port" {

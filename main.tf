@@ -31,6 +31,7 @@ data "template_file" "install_kubernetes" {
   template = file("${path.module}/templates/setup-kube.sh.tpl")
 
   vars = {
-    kubernetes_version = var.kubernetes_version
+    kubernetes_version     = var.kubernetes_version
+    kubernetes_apt_release = var.kubernetes_apt_release
   }
 }
