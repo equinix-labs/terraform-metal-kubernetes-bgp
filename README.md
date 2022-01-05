@@ -277,7 +277,7 @@ cat << EOF | DATASTORE_TYPE=kubernetes KUBECONFIG=~/.kube/config calicoctl creat
 apiVersion: projectcalico.org/v3
 kind: IPPool
 metadata:
-  name: metallb-ewr1-public
+  name: metallb-sv-public
 spec:
   cidr: 139.178.64.136/31
   disabled: true
@@ -301,7 +301,7 @@ cat << EOF | DATASTORE_TYPE=kubernetes KUBECONFIG=~/.kube/config calicoctl creat
 apiVersion: projectcalico.org/v3
 kind: IPPool
 metadata:
-  name: metallb-ewr1-private
+  name: metallb-sv-private
 spec:
   cidr: 10.99.110.128/25
   disabled: true
@@ -323,10 +323,10 @@ cat << EOF | DATASTORE_TYPE=kubernetes KUBECONFIG=~/.kube/config calicoctl creat
 apiVersion: projectcalico.org/v3
 kind: BGPPeer
 metadata:
-  name: ewr1-worker-0
+  name: sv-worker-0
 spec:
   peerIP: 10.99.14.7
-  node: ewr1-worker-0
+  node: sv-worker-0
   asNumber: 65530
 EOF
 ```
@@ -336,10 +336,10 @@ cat << EOF | DATASTORE_TYPE=kubernetes KUBECONFIG=~/.kube/config calicoctl creat
 apiVersion: projectcalico.org/v3
 kind: BGPPeer
 metadata:
-  name: ewr1-worker-1
+  name: sv-worker-1
 spec:
   peerIP: 10.99.14.6
-  node: ewr1-worker-1
+  node: sv-worker-1
   asNumber: 65530
 EOF
 ```
@@ -430,11 +430,11 @@ data:
       peer-asn: 65000
       my-asn: 65480
     address-pools:
-    - name: ewr1-public
+    - name: sv-public
       protocol: bgp
       addresses:
       - 147.75.194.92/30
-    - name: ewr1-private
+    - name: sv-private
       protocol: bgp
       addresses:
       - 10.99.110.128/25
@@ -448,9 +448,9 @@ NOTE: After this is setup the master will have its calico-node as not ready becu
 
 ```sh
 $ kubectl get pod -n kube-system -o wide | grep calico-node
-calico-node-9pls6                           1/1     Running   0          7h47m   10.99.14.5   ewr1-worker-0       <none>           <none>
-calico-node-cgcbb                           1/1     Running   0          7h47m   10.99.14.7   ewr1-worker-1       <none>           <none>
-calico-node-wz4x4                           0/1     Running   0          7h47m   10.99.14.9   ewr1-controller-0   <none>           <none>
+calico-node-9pls6                           1/1     Running   0          7h47m   10.99.14.5   sv-worker-0       <none>           <none>
+calico-node-cgcbb                           1/1     Running   0          7h47m   10.99.14.7   sv-worker-1       <none>           <none>
+calico-node-wz4x4                           0/1     Running   0          7h47m   10.99.14.9   sv-controller-0   <none>           <none>
 ```
 
 It is not peering with MetalLB becuase the metallb-speakers do not run on the master.
@@ -458,15 +458,15 @@ It is not peering with MetalLB becuase the metallb-speakers do not run on the ma
 ```sh
 $ kubectl get pod -n metallb-system -o wide
 NAME                          READY   STATUS    RESTARTS   AGE     IP           NODE            NOMINATED NODE   READINESS GATES
-controller-7cc9c87cfb-q6hh4   1/1     Running   0          7h16m   172.16.1.4   ewr1-worker-0   <none>           <none>
-speaker-jrzlc                 1/1     Running   0          7h16m   10.99.14.7   ewr1-worker-1   <none>           <none>
-speaker-qgvp5                 1/1     Running   0          7h16m   10.99.14.5   ewr1-worker-0   <none>           <none>
+controller-7cc9c87cfb-q6hh4   1/1     Running   0          7h16m   172.16.1.4   sv-worker-0   <none>           <none>
+speaker-jrzlc                 1/1     Running   0          7h16m   10.99.14.7   sv-worker-1   <none>           <none>
+speaker-qgvp5                 1/1     Running   0          7h16m   10.99.14.5   sv-worker-0   <none>           <none>
 ```
 
 Everything works though and the node-to-node mesh is also fine.
 
 ```sh
-root@ewr1-controller-0:~# calicoctl node status
+root@sv-controller-0:~# calicoctl node status
 Calico process is running.
 
 IPv4 BGP status

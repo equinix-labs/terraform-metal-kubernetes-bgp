@@ -8,7 +8,7 @@ localAPIEndpoint:
   advertiseAddress: 10.99.254.3
   bindPort: 6443
 nodeRegistration:
-  name: ewr1-controller
+  name: sv-controller
   taints:
   - key: "kubeadmNode"
     value: "master"
@@ -37,12 +37,12 @@ etcd:
       advertise-client-urls: "https://10.99.254.3:2379"
       listen-peer-urls: "https://10.99.254.3:2380"
       initial-advertise-peer-urls: "https://10.99.254.3:2380"
-      initial-cluster: "ewr1-controller=https://10.99.254.3:2380"
+      initial-cluster: "sv-controller=https://10.99.254.3:2380"
       initial-cluster-state: new
     serverCertSANs:
-      - ewr1-controller
+      - sv-controller
     peerCertSANs:
-      - ewr1-controller
+      - sv-controller
 networking:
   dnsDomain: cluster.local
   podSubnet: 172.16.0.0/12
