@@ -1,0 +1,86 @@
+---
+fail_fast: false
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.88.4
+    hooks:
+      - id: terraform_fmt
+        args:
+          - "--args=-recursive"
+      - id: terraform_validate
+        exclude: "^[^/]+$"
+      - id: terraform_tflint
+        args:
+          - "--args=--config=__GIT_WORKING_DIR__/.tflint.hcl"
+      - id: terraform_tfsec
+        args:
+          - "--args=--soft-fail"
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # Git style
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-vcs-permalinks
+      - id: forbid-new-submodules
+      - id: no-commit-to-branch
+        args: ["--branch", "master"]
+
+      # Common errors
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args:
+          - "--markdown-linebreak-ext=md"
+        exclude: CHANGELOG.md
+      - id: check-yaml
+        args:
+          - "--allow-multiple-documents"
+        exclude: |
+          (?x)^(
+              examples/|
+              \.*?.yaml$"
+          )$
+      - id: check-json
+      - id: check-symlinks
+      - id: check-executables-have-shebangs
+
+      # Cross platform
+      - id: check-case-conflict
+      - id: mixed-line-ending
+        args:
+          - "--fix=lf"
+
+      # Security
+      - id: detect-private-key
+
+  # Shell Script Formatter and Markdown Linter
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+      - id: shfmt
+        exclude: |
+          (?x)^(
+              helpers/helper-script.sh|
+              scripts/template-script.sh
+          )$
+      - id: shellcheck
+        args:
+          - "--severity=warning"
+          - "--source-path=SCRIPTDIR scripts/* helpers/*"
+          - "--shell=bash"
+        exclude: |
+          (?x)^(
+              helpers/helper-script.sh|
+              scripts/template-script.sh
+          )$
+      - id: markdownlint
+        exclude: "CHANGELOG.md"
+
+  # JSON5 and Yaml Prettyfier
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        types: [json5, yaml]
+        exclude: "^examples/"

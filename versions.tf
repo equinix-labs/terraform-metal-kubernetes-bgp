@@ -1,9 +1,13 @@
 terraform {
+  provider_meta "equinix" {
+    module_name = "metal-kubernetes-bgp"
+  }
+
   required_providers {
-    metal = {
-      source  = "equinix/metal"
-      version = ">= 3.2.1"
+    equinix = {
+      source  = "equinix/equinix"
+      version = ">= 1.30"
     }
   }
-  required_version = ">= 0.14"
+  required_version = ">= 1.0"
 }

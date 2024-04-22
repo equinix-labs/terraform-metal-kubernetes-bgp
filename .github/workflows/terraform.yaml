@@ -1,38 +1,85 @@
-name: 'terraform'
-# This workflow verifies that the Terraform configs are valid.
-# https://learn.hashicorp.com/tutorials/terraform/automate-terraform
+name: "run-pre-commit-hooks"
+# This workflow runs the pre-commit hooks defined in .pre-commit-config.yaml
 
 on:
-  push:
-    branches:
-    - main
   pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test
+  pre-commit:
     runs-on: ${{ matrix.os }}
     env:
-      TF_IN_AUTOMATION: 1
-      TF_VERSION: ${{ matrix.tf }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
         os: [ubuntu-latest]
-        tf: [1.1.2]
+        tf: [1.5.7]
+        tflint: [v0.50.3]
+        tfsec: [v1.28.5]
+        shfmt: [v3.8.0]
+        shellcheck: [v0.10.0]
+    permissions:
+      pull-requests: write
+      id-token: write
+      contents: read
     steps:
-    - name: Checkout from Github
-      uses: actions/checkout@v2
-    - name: Install Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: ${{ env.TF_VERSION }}
-    - name: Check Terraform formatting
-      id: fmt
-      run: terraform fmt
-      continue-on-error: true
-    - name: Initialize Terraform, Modules, and Plugins
-      id: init
-      run: terraform init -input=false
-    - name: Validate Terraform syntax
-      id: validate
-      run: terraform validate -no-color
+      - name: Checkout from Github
+        uses: actions/checkout@v4
+
+      - name: Install Python3
+        uses: actions/setup-python@v5
+
+      - name: Install tflint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: ${{ matrix.tflint }}
+
+      - name: Cache tflint plugin dir
+        uses: actions/cache@v4
+        with:
+          path: ~/.tflint.d/plugins
+          key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ matrix.tf }}
+
+      - name: Config Terraform plugin cache
+        run: |
+          echo 'plugin_cache_dir="$HOME/.terraform.d/plugin-cache"' >~/.terraformrc
+          mkdir --parents ~/.terraform.d/plugin-cache
+
+      - name: Cache Terraform
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-
+
+      - name: Install tfsec
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        with:
+          repo: aquasecurity/tfsec
+          platform: linux
+          arch: amd64
+          tag: ${{ matrix.tfsec }}
+
+      - name: Install shfmt
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        with:
+          repo: mvdan/sh
+          platform: linux
+          arch: amd64
+          tag: ${{ matrix.shfmt }}
+          extension-matching: disable
+          rename-to: shfmt
+          chmod: 0755
+
+      - uses: pre-commit/action@v3.0.1

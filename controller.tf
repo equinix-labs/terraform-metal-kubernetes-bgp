@@ -3,8 +3,8 @@ variable "hostname" {
 }
 
 // Setup the kubernetes controller node
-resource "metal_device" "k8s_controller" {
-  project_id       = metal_project.kubenet.id
+resource "equinix_metal_device" "k8s_controller" {
+  project_id       = equinix_metal_project.kubenet.id
   metro            = var.metro
   plan             = var.controller_plan
   operating_system = var.metal_os
@@ -15,7 +15,7 @@ resource "metal_device" "k8s_controller" {
   connection {
     type        = "ssh"
     user        = "root"
-    host        = metal_device.k8s_controller.access_public_ipv4
+    host        = equinix_metal_device.k8s_controller.access_public_ipv4
     private_key = tls_private_key.k8s_cluster_access_key.private_key_pem
   }
 
@@ -25,17 +25,30 @@ resource "metal_device" "k8s_controller" {
   }
 
   provisioner "file" {
-    content     = data.template_file.install_docker.rendered
+    content = templatefile("${path.module}/templates/install-docker.sh.tpl", {
+      docker_version = var.docker_version
+    })
     destination = "/tmp/install-docker.sh"
   }
 
   provisioner "file" {
-    content     = data.template_file.install_kubernetes.rendered
+    content = templatefile("${path.module}/templates/setup-kube.sh.tpl", {
+      kubernetes_version     = var.kubernetes_version
+      kubernetes_apt_release = var.kubernetes_apt_release
+    })
     destination = "/tmp/setup-kube.sh"
   }
 
+
   provisioner "file" {
-    content     = data.template_file.setup_kubeadm.rendered
+    content = templatefile("${path.module}/templates/setup-kubeadm.sh.tpl", {
+      kubernetes_version      = var.kubernetes_version
+      kubernetes_port         = var.kubernetes_port
+      kubernetes_dns_ip       = var.kubernetes_dns_ip
+      kubernetes_dns_domain   = var.kubernetes_dns_domain
+      kubernetes_cluster_cidr = var.kubernetes_cluster_cidr
+      kubernetes_service_cidr = var.kubernetes_service_cidr
+    })
     destination = "/tmp/setup-kubeadm.sh"
   }
 
@@ -60,22 +73,9 @@ data "external" "kubeadm_join" {
   program = ["${path.module}/scripts/kubeadm-token.sh"]
 
   query = {
-    host = metal_device.k8s_controller.access_public_ipv4
+    host = equinix_metal_device.k8s_controller.access_public_ipv4
   }
 
   # Make sure to only run this after the controller is up and setup
-  depends_on = [metal_device.k8s_controller]
-}
-
-data "template_file" "setup_kubeadm" {
-  template = file("${path.module}/templates/setup-kubeadm.sh.tpl")
-
-  vars = {
-    kubernetes_version      = var.kubernetes_version
-    kubernetes_port         = var.kubernetes_port
-    kubernetes_dns_ip       = var.kubernetes_dns_ip
-    kubernetes_dns_domain   = var.kubernetes_dns_domain
-    kubernetes_cluster_cidr = var.kubernetes_cluster_cidr
-    kubernetes_service_cidr = var.kubernetes_service_cidr
-  }
+  depends_on = [equinix_metal_device.k8s_controller]
 }
