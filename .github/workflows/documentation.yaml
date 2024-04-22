@@ -1,0 +1,57 @@
+name: generate-terraform-docs
+# This workflow will generate terraform docs into README.md in the root, examples, and modules folders.
+# Source: https://github.com/equinix-labs/terraform-equinix-kubernetes-addons/blob/main/.github/workflows/documentation.yaml
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**/*.tpl"
+      - "**/*.tf"
+
+permissions:
+  contents: write # Workflow needs to push new branches to open PRs with docs changes
+  pull-requests: write # Workflow needs to open PRs with docs changes
+
+jobs:
+  tf-docs:
+    name: TF docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        id: actions-checkout
+        with:
+          ref: main
+
+      - name: Render terraform docs inside the main and the modules README.md files and push changes back to PR branch
+        id: terraform-docs
+        uses: terraform-docs/gh-actions@v1
+        with:
+          find-dir: .
+          args: --sort-by required
+          indention: 2
+          git-push: "false"
+
+      # terraform-docs/gh-actions@v1.0.0 modifies .git files with owner root:root, and the following steps fail with
+      # insufficient permission for adding an object to repository database .git/objects
+      # since the expected user is runner:docker. See https://github.com/terraform-docs/gh-actions/issues/90
+      - name: Fix .git owner
+        run: sudo chown runner:docker -R .git
+
+      - name: Create Pull Request
+        if: steps.terraform-docs.outputs.num_changed != '0'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "generate-terraform-docs: automated action"
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          title: "generate-terraform-docs: automated action"
+          body: |
+            Update terraform docs
+          branch-suffix: timestamp
+          base: main
+          signoff: true
+          delete-branch: true
+
+      # TODO(ocobleseqx): https://github.com/peter-evans/enable-pull-request-automerge
