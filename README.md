@@ -1,6 +1,6 @@
 ![](https://img.shields.io/badge/Stability-Experimental-red.svg)
 
-This repository is [Experimental](https://github.com/packethost/standards/blob/master/experimental-statement.md) meaning that it's based on untested ideas or techniques and not yet established or finalized or involves a radically new and innovative style! This means that support is best effort (at best!) and we strongly encourage you to NOT use this in production.
+This repository is [Experimental](https://github.com/equinix-labs/equinix-labs/blob/main/experimental-statement.md) meaning that it's based on untested ideas or techniques and not yet established or finalized or involves a radically new and innovative style! This means that support is best effort (at best!) and we strongly encourage you to NOT use this in production.
 
 Kubernetes on Equinix Metal
 ====================
@@ -311,7 +311,7 @@ EOF
 We will also need Calico to peer with each of our servers ToR Router which requires a per node config. You can get BGP peer info directly from the API:
 
 ```
-https://api.packet.net/devices/${INSTANCE_UUID}/bgp/neighbors
+https://api.equinix.com/metal/v1/devices/${INSTANCE_UUID}/bgp/neighbors
 ```
 
 Setup the BGP peers for each worker node.
