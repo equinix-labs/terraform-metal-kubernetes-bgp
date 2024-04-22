@@ -1,5 +1,5 @@
-resource "metal_device" "k8s_workers" {
-  project_id       = metal_project.kubenet.id
+resource "equinix_metal_device" "k8s_workers" {
+  project_id       = equinix_metal_project.kubenet.id
   metro            = var.metro
   count            = var.worker_count
   plan             = var.worker_plan
@@ -9,14 +9,14 @@ resource "metal_device" "k8s_workers" {
   tags             = ["kubernetes", "k8s", "worker"]
 }
 
-# Using a null_resource so the metal_device doesn't not have to wait to be initially provisioned
+# Using a null_resource so the equinix_metal_device doesn't not have to wait to be initially provisioned
 resource "null_resource" "setup_worker" {
   count = var.worker_count
 
   connection {
     type        = "ssh"
     user        = "root"
-    host        = element(metal_device.k8s_workers.*.access_public_ipv4, count.index)
+    host        = element(equinix_metal_device.k8s_workers.*.access_public_ipv4, count.index)
     private_key = tls_private_key.k8s_cluster_access_key.private_key_pem
   }
 
@@ -26,12 +26,17 @@ resource "null_resource" "setup_worker" {
   }
 
   provisioner "file" {
-    content     = data.template_file.install_docker.rendered
+    content = templatefile("${path.module}/templates/install-docker.sh.tpl", {
+      docker_version = var.docker_version
+    })
     destination = "/tmp/install-docker.sh"
   }
 
   provisioner "file" {
-    content     = data.template_file.install_kubernetes.rendered
+    content = templatefile("${path.module}/templates/setup-kube.sh.tpl", {
+      kubernetes_version     = var.kubernetes_version
+      kubernetes_apt_release = var.kubernetes_apt_release
+    })
     destination = "/tmp/setup-kube.sh"
   }
 
@@ -70,7 +75,7 @@ resource "null_resource" "setup_worker" {
     connection {
       type        = "ssh"
       user        = "root"
-      host        = metal_device.k8s_controller.access_public_ipv4
+      host        = equinix_metal_device.k8s_controller.access_public_ipv4
       private_key = tls_private_key.k8s_cluster_access_key.private_key_pem
     }
   }
@@ -82,6 +87,6 @@ data "external" "private_ipv4_gateway" {
   program = ["${path.module}/scripts/gateway.sh"]
 
   query = {
-    host = element(metal_device.k8s_workers.*.access_public_ipv4, count.index)
+    host = element(equinix_metal_device.k8s_workers.*.access_public_ipv4, count.index)
   }
 }
